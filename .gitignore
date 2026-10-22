@@ -1,0 +1,14 @@
+# Secrets: never commit the real .env file
+.env
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

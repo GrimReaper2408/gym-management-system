@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Memberships{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Memberships</h1>
+
+<!-- Assign a plan to a member. The end date is calculated by the database
+     (stored procedure AssignMembership): start date + plan duration. -->
+<div class="card form-card mb-4">
+  <div class="card-header">Assign a plan to a member</div>
+  <div class="card-body">
+    {% if not members or not plans %}
+      <p class="text-muted mb-0">
+        You need at least one <a href="{{ url_for('members') }}">member</a> and one
+        <a href="{{ url_for('plans') }}">plan</a> before assigning a membership.
+      </p>
+    {% else %}
+    <form method="post" action="{{ url_for('assign_membership') }}" class="row g-3">
+      <div class="col-md-4">
+        <label for="member_id" class="form-label">Member</label>
+        <select id="member_id" name="member_id" class="form-select" required>
+          <option value="" selected disabled>Choose a member</option>
+          {% for m in members %}
+          <option value="{{ m.member_id }}">{{ m.name }} (#{{ m.member_id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="plan_id" class="form-label">Plan</label>
+        <select id="plan_id" name="plan_id" class="form-select" required>
+          <option value="" selected disabled>Choose a plan</option>
+          {% for p in plans %}
+          <option value="{{ p.plan_id }}">{{ p.plan_name }} &ndash; {{ p.duration_months }} mo &ndash; {{ p.price | inr }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="start_date" class="form-label">Start date</label>
+        <input type="date" id="start_date" name="start_date" class="form-control" required
+               value="{{ today }}" max="{{ today }}">
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Assign</button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Member</th><th>Plan</th><th>Start</th><th>End</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for ms in memberships %}
+      <tr>
+        <td>{{ ms.membership_id }}</td>
+        <td>{{ ms.member_name }}</td>
+        <td>{{ ms.plan_name }}</td>
+        <td>{{ ms.start_date }}</td>
+        <td>{{ ms.end_date }}</td>
+        <td>
+          <!-- current_status comes from the stored function GetMembershipStatus -->
+          {% if ms.current_status == 'Active' %}
+            <span class="badge text-bg-success">Active</span>
+          {% else %}
+            <span class="badge text-bg-secondary">{{ ms.current_status }}</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No memberships yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

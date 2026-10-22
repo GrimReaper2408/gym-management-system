@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Attendance</h1>
+
+<!-- Check-in: MySQL fills in today's date and the current time. -->
+<div class="card form-card mb-4">
+  <div class="card-header">Record a check-in (today, now)</div>
+  <div class="card-body">
+    {% if not members %}
+      <p class="text-muted mb-0">No members yet. <a href="{{ url_for('add_member') }}">Add a member</a> first.</p>
+    {% else %}
+    <form method="post" action="{{ url_for('check_in') }}" class="row g-3">
+      <div class="col-md-8">
+        <label for="member_id" class="form-label">Member</label>
+        <select id="member_id" name="member_id" class="form-select" required>
+          <option value="" selected disabled>Choose a member</option>
+          {% for m in members %}
+          <option value="{{ m.member_id }}">{{ m.name }} (#{{ m.member_id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Check in</button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<h2 class="h5">History <small class="text-muted">(latest 100 check-ins)</small></h2>
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Member</th><th>Date</th><th>Check-in time</th></tr>
+    </thead>
+    <tbody>
+      {% for a in attendance %}
+      <tr>
+        <td>{{ a.attendance_id }}</td>
+        <td>{{ a.member_name }}</td>
+        <td>{{ a.attendance_date }}</td>
+        <td>{{ a.check_in }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="text-center text-muted py-4">No check-ins recorded yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

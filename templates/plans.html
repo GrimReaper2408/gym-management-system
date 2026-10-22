@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Plans{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Plans</h1>
+
+<!-- The same form adds a plan (edit_id is None) or edits one (edit_id is the plan's id) -->
+<div class="card form-card mb-4">
+  <div class="card-header">{% if edit_id %}Edit plan #{{ edit_id }}{% else %}Add a plan{% endif %}</div>
+  <div class="card-body">
+    <form method="post"
+          action="{% if edit_id %}{{ url_for('edit_plan', plan_id=edit_id) }}{% else %}{{ url_for('add_plan') }}{% endif %}"
+          class="row g-3">
+      <div class="col-md-4">
+        <label for="plan_name" class="form-label">Plan name</label>
+        <input type="text" id="plan_name" name="plan_name" class="form-control" required maxlength="50"
+               value="{{ form.plan_name }}">
+      </div>
+      <div class="col-md-3">
+        <label for="duration_months" class="form-label">Duration (months)</label>
+        <input type="number" id="duration_months" name="duration_months" class="form-control" required
+               min="1" max="60" step="1" value="{{ form.duration_months }}">
+      </div>
+      <div class="col-md-3">
+        <label for="price" class="form-label">Price (₹)</label>
+        <input type="number" id="price" name="price" class="form-control" required
+               min="0.01" step="0.01" value="{{ form.price }}">
+      </div>
+      <div class="col-md-2 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">{% if edit_id %}Save{% else %}Add{% endif %}</button>
+        {% if edit_id %}<a href="{{ url_for('plans') }}" class="btn btn-outline-secondary">Cancel</a>{% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Plan</th><th>Duration</th><th>Price</th><th class="text-end">Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for p in plans %}
+      <tr>
+        <td>{{ p.plan_id }}</td>
+        <td>{{ p.plan_name }}</td>
+        <td>{{ p.duration_months }} month{% if p.duration_months != 1 %}s{% endif %}</td>
+        <td>{{ p.price | inr }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('plans', edit=p.plan_id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">No plans yet. Add one above.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

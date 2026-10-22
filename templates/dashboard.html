@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Dashboard</h1>
+
+<!-- Four numbers, each one comes from a SELECT query in app.py -->
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-label">Total members</div>
+        <div class="stat-value">{{ stats.members }}</div>
+      </div>
+      <a href="{{ url_for('members') }}" class="stretched-link"></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-label">Active memberships</div>
+        <div class="stat-value">{{ stats.active }}</div>
+      </div>
+      <a href="{{ url_for('memberships') }}" class="stretched-link"></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-label">Today's attendance</div>
+        <div class="stat-value">{{ stats.today }}</div>
+      </div>
+      <a href="{{ url_for('attendance') }}" class="stretched-link"></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card h-100">
+      <div class="card-body">
+        <div class="stat-label">Total payments recorded</div>
+        <div class="stat-value">{{ stats.payments | inr }}</div>
+      </div>
+      <a href="{{ url_for('payments') }}" class="stretched-link"></a>
+    </div>
+  </div>
+</div>
+{% endblock %}
